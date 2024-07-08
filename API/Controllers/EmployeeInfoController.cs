@@ -7,37 +7,34 @@ namespace API.Controllers
     public class EmployeeInfoController : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<EmployeeInfo>>> GetEmployees()
+        public async Task<IActionResult> GetEmployees()
         {
-            return await Mediator.Send(new List.Query());
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<EmployeeInfo>> GetEmployee(Guid id)
+        public async Task<IActionResult> GetEmployee(Guid id)
         {
-            return await Mediator.Send(new Details.Query { Id = id });
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(EmployeeInfo employee)
         {
-            await Mediator.Send(new Create.Command { EmployeeInfo = employee });
-            return Ok();
+            return HandleResult(await Mediator.Send(new Create.Command { EmployeeInfo = employee }));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> EditEmployee(Guid id, EmployeeInfo employee)
         {
             employee.Id = id;
-            await Mediator.Send(new Edit.Command { Employee = employee });
-            return Ok();
+            return HandleResult(await Mediator.Send(new Edit.Command { Employee = employee }));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
-            await Mediator.Send(new Delete.Command { Id = id });
-            return Ok();
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
     }
 }

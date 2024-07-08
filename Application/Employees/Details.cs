@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
 using Persistence;
 
@@ -6,11 +7,11 @@ namespace Application.Employees
 {
     public class Details
     {
-        public class Query : IRequest<EmployeeInfo>
+        public class Query : IRequest<Result<EmployeeInfo>>
         {
             public Guid Id { get; set; }
         }
-        public class Handler : IRequestHandler<Query, EmployeeInfo>
+        public class Handler : IRequestHandler<Query, Result<EmployeeInfo>>
         {
             private readonly DataContext _dataContext;
 
@@ -18,9 +19,11 @@ namespace Application.Employees
             {
                 this._dataContext = dataContext;
             }
-            public async Task<EmployeeInfo> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<EmployeeInfo>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _dataContext.Employees.FindAsync(request.Id);
+                var employee = await _dataContext.Employees.FindAsync(request.Id);
+
+                return Result<EmployeeInfo>.Success(employee);
             }
         }
     }
